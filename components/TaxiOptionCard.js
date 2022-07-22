@@ -2,7 +2,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { Divider } from "@rneui/themed";
 import tw from "tailwind-react-native-classnames";
-import { setTravelTimeInfromation } from "../slices/navSlice";
+import { setTripInformation } from "../slices/navSlice";
 import { useDispatch } from "react-redux";
 
 const TaxiOptionCard = ({ price, speed, type, image }) => {
@@ -10,7 +10,7 @@ const TaxiOptionCard = ({ price, speed, type, image }) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        const action = setTravelTimeInfromation({
+        const action = setTripInformation({
           tripDetails: {
             type,
             speed,

@@ -1,9 +1,13 @@
-import { Image, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { ActivityIndicator, Image, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
 import { Button, Card, Divider, Icon } from "@rneui/themed";
 import tw from "tailwind-react-native-classnames";
-import { useSelector } from "react-redux";
-import { selectTravelTimeInfromation } from "../../slices/navSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectDriverInfomation,
+  selectTripInformation,
+  setDriverInformation,
+} from "../../slices/navSlice";
 import { faCircleQuestion } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation } from "@react-navigation/native";
@@ -11,7 +15,21 @@ import SafeAreaViewAdroid from "../../components/SafeAreaView";
 
 const ProcessingScreen = () => {
   const navigator = useNavigation();
-  const tripInfo = useSelector(selectTravelTimeInfromation);
+  const tripInfo = useSelector(selectTripInformation);
+  const dispatch = useDispatch();
+
+  let driverInfomation = useSelector (selectDriverInfomation)
+
+  setTimeout(() => {
+    const action = setDriverInformation({
+      name: "Vo Dinh Phuc",
+      phoneNumber: "0123456789",
+      plate: "76C1-2134554",
+      avatar:
+        "https://w7.pngwing.com/pngs/798/518/png-transparent-computer-icons-social-media-user-driving-taxi-driver-face-hand-boy.png",
+    });
+    dispatch(action);
+  }, 5000);
   return (
     <SafeAreaViewAdroid>
       <View style={tw`h-full bg-white`}>
@@ -53,26 +71,39 @@ const ProcessingScreen = () => {
             <Card.Divider />
 
             <View style={tw`h-2/3 flex-row`}>
-              <Image
-                style={tw`h-full w-1/3`}
-                source={{
-                  uri: "https://w7.pngwing.com/pngs/798/518/png-transparent-computer-icons-social-media-user-driving-taxi-driver-face-hand-boy.png",
-                }}
-              />
-              <View>
-                <View style={tw`flex-row px-5 items-center`}>
-                  <Text style={tw`text-lg font-bold`}>NAME: </Text>
-                  <Text style={tw`text-sm font-medium ml-2`}>Vo Dinh Phuc</Text>
+              {!driverInfomation && (
+                <View style={tw`h-full w-full justify-center items-center `}>
+                  <ActivityIndicator size="large" />
                 </View>
-                <View style={tw`flex-row px-5 items-center`}>
-                  <Text style={tw`text-lg font-bold`}>PHONE: </Text>
-                  <Text style={tw`text-sm font-medium ml-2`}>0123456</Text>
-                </View>
-                <View style={tw`flex-row px-5 items-center`}>
-                  <Text style={tw`text-lg font-bold`}>PLATE: </Text>
-                  <Text style={tw`text-sm font-medium ml-2`}>76C-12345</Text>
-                </View>
-              </View>
+              )}
+              {driverInfomation && (
+                <>
+                  <Image
+                    style={tw`h-full w-1/3`}
+                    source={{
+                      uri: "https://w7.pngwing.com/pngs/798/518/png-transparent-computer-icons-social-media-user-driving-taxi-driver-face-hand-boy.png",
+                    }}
+                  />
+                  <View>
+                    <View style={tw`flex-row px-5 items-center`}>
+                      <Text style={tw`text-lg font-bold`}>NAME: </Text>
+                      <Text style={tw`text-sm font-medium ml-2`}>
+                        Vo Dinh Phuc
+                      </Text>
+                    </View>
+                    <View style={tw`flex-row px-5 items-center`}>
+                      <Text style={tw`text-lg font-bold`}>PHONE: </Text>
+                      <Text style={tw`text-sm font-medium ml-2`}>0123456</Text>
+                    </View>
+                    <View style={tw`flex-row px-5 items-center`}>
+                      <Text style={tw`text-lg font-bold`}>PLATE: </Text>
+                      <Text style={tw`text-sm font-medium ml-2`}>
+                        76C-12345
+                      </Text>
+                    </View>
+                  </View>
+                </>
+              )}
             </View>
           </Card>
         </View>
@@ -129,6 +160,7 @@ const ProcessingScreen = () => {
             titleStyle={{
               color: "black",
             }}
+            disabled = {driverInfomation}
           >
             Cancle
           </Button>

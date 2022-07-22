@@ -90,7 +90,7 @@ const HomeScreen = () => {
                 inputRef?.current.setAddressText("Your location is choosen");
 
                 let action = setOrigin({
-                  description: address.results[0].formatted_address,
+                  description: address,
                   lat: location.coords.latitude,
                   lng: location.coords.longitude,
                 });

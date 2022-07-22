@@ -16,7 +16,7 @@ import { useSelector } from "react-redux";
 import {
   selectDestination,
   selectOrigin,
-  selectTravelTimeInfromation,
+  selectTripInformation,
 } from "../slices/navSlice";
 import PaymentMethodOptionsDialog from "./PaymentMethodOptionsDialog";
 import pushNotification from "../Utils/pushNotification";
@@ -49,7 +49,7 @@ const Payment = () => {
   const [showPaymentOptionsDialog, setShowPaymentOptionsDialog] =
     useState(false);
   const navigator = useNavigation();
-  const tripInfo = useSelector(selectTravelTimeInfromation);
+  const tripInfo = useSelector(selectTripInformation);
   const origin = useSelector(selectOrigin);
   const destination = useSelector(selectDestination);
   return (

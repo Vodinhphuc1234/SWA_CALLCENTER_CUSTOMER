@@ -11,12 +11,13 @@ import {
   selectDestination,
   selectOrigin,
   setDestination,
-  setTravelTimeInfromation,
+  setTripInformation,
 } from "../slices/navSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faLocationCrosshairs } from "@fortawesome/free-solid-svg-icons/faLocationCrosshairs";
 import getCurrentLocation from "../Utils/getCurrentLocation";
 import { faCar, faMapPin } from "@fortawesome/free-solid-svg-icons";
+import getDistanceAndDuration from "../Utils/getDistanceAndDuration";
 
 const Map = ({ autocompleteInput }) => {
   let origin = useSelector(selectOrigin);
@@ -39,17 +40,12 @@ const Map = ({ autocompleteInput }) => {
       );
 
       const getTralvelInfo = async () => {
-        fetch(
-          `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin.lat}%2C${origin.lng}&destinations=${destination.lat}%2C${destination.lng}&key=${GOOGLE_MAP_API}`
-        )
-          .then((res) => res.json())
-          .then((data) => {
-            const action = setTravelTimeInfromation({
-              distance: data.rows[0].elements[0].distance.text,
-              duration: data.rows[0].elements[0].duration.text,
-            });
-            dispatch(action);
-          });
+        let summary = await getDistanceAndDuration(origin, destination);
+        const action = setTripInformation({
+          distance: `${(summary.length/1000).toFixed(2)} km`,
+          duration: `${(summary.duration/60).toFixed(2)} minutes`,
+        });
+        dispatch(action);
       };
 
       getTralvelInfo();

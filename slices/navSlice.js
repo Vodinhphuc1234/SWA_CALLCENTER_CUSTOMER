@@ -3,8 +3,9 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   origin: null,
   destination: null,
-  travelTimeInfromation: null,
+  tripInformation: null,
   user: null,
+  driverInformation: null,
 };
 
 export const navSlice = createSlice({
@@ -31,29 +32,33 @@ export const navSlice = createSlice({
         ...action?.payload,
       };
     },
-    setTravelTimeInfromation(state, action) {
+    setTripInformation(state, action) {
       if (!action.payload) {
-        state.travelTimeInfromation = action.payload;
+        state.tripInformation = action.payload;
         return;
       }
-      state.travelTimeInfromation = {
-        ...state.travelTimeInfromation,
+      state.tripInformation = {
+        ...state.tripInformation,
         ...action?.payload,
       };
     },
     setUser(state, action) {
       state.user = action.payload;
     },
+    setDriverInformation(state, action) {
+      state.driverInformation = action.payload;
+    }
   },
 });
 
-export const { setOrigin, setDestination, setTravelTimeInfromation, setUser } =
+export const { setOrigin, setDestination, setTripInformation, setUser, setDriverInformation } =
   navSlice.actions;
 
 export const selectOrigin = (state) => state.nav.origin;
 export const selectDestination = (state) => state.nav.destination;
-export const selectTravelTimeInfromation = (state) =>
-  state.nav.travelTimeInfromation;
+export const selectTripInformation = (state) =>
+  state.nav.tripInformation;
 export const selectUser = (state) => state.nav.user;
+export const selectDriverInfomation = (state) => state.nav.driverInformation;
 
 export default navSlice.reducer;

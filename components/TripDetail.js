@@ -2,12 +2,12 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import tw from "tailwind-react-native-classnames";
 import { useSelector } from "react-redux";
-import { selectTravelTimeInfromation } from "../slices/navSlice";
+import { selectTripInformation } from "../slices/navSlice";
 import { Icon } from "@rneui/base";
 import { useNavigation } from "@react-navigation/native";
 
 const TripDetail = ({ props }) => {
-  const tralvelInfomation = useSelector(selectTravelTimeInfromation);
+  const tralvelInfomation = useSelector(selectTripInformation);
   const navigator = useNavigation();
   return (
     <View style={tw`bg-white h-full`}>
