@@ -11,6 +11,7 @@ import {
   selectDestination,
   selectOrigin,
   setDestination,
+  setOrigin,
   setTripInformation,
 } from "../slices/navSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -18,13 +19,47 @@ import { faLocationCrosshairs } from "@fortawesome/free-solid-svg-icons/faLocati
 import getCurrentLocation from "../Utils/getCurrentLocation";
 import { faCar, faMapPin } from "@fortawesome/free-solid-svg-icons";
 import getDistanceAndDuration from "../Utils/getDistanceAndDuration";
+import getLocationName from "../Utils/getLocationName";
 
-const Map = ({ autocompleteInput }) => {
+const Map = () => {
   let origin = useSelector(selectOrigin);
   let destination = useSelector(selectDestination);
   const DEFAULT_PADDING = { top: 40, right: 40, bottom: 40, left: 40 };
-
   const dispatch = useDispatch();
+
+  const handleChangeOrigin = (origin) => {
+    const action = setOrigin({
+      ...origin,
+    });
+    dispatch(action);
+  };
+  const handleChangeDestination = (destination) => {
+    const action = setDestination({
+      ...destination,
+    });
+    dispatch(action);
+  };
+
+  const handleDragEndOrigin = async (e) => {
+    const coordinate = e.nativeEvent.coordinate;
+    let originAddress = await getLocationName(coordinate);
+
+    handleChangeOrigin({
+      description: originAddress,
+      lat: coordinate.latitude,
+      lng: coordinate.longitude,
+    });
+  };
+  const handleDragEndDestination = async (e) => {
+    const coordinate = e.nativeEvent.coordinate;
+    let destinationAddress = await getLocationName(coordinate);
+
+    handleChangeDestination({
+      description: destinationAddress,
+      lat: coordinate.latitude,
+      lng: coordinate.longitude,
+    });
+  };
 
   useEffect(() => {
     if (origin && destination) {
@@ -42,8 +77,8 @@ const Map = ({ autocompleteInput }) => {
       const getTralvelInfo = async () => {
         let summary = await getDistanceAndDuration(origin, destination);
         const action = setTripInformation({
-          distance: `${(summary.length/1000).toFixed(2)} km`,
-          duration: `${(summary.duration/60).toFixed(2)} minutes`,
+          distance: `${(summary.length / 1000).toFixed(2)} km`,
+          duration: `${(summary.duration / 60).toFixed(2)} minutes`,
         });
         dispatch(action);
       };
@@ -66,30 +101,29 @@ const Map = ({ autocompleteInput }) => {
         }}
         ref={mapRef}
         showsUserLocation={true}
-        // onUserLocationChange={(e) => {
-        //   console.log(e.nativeEvent);
+        // onPress={(point) => {
+        //   const coordinate = point.nativeEvent.coordinate;
+        //   mapRef.current.addressForCoordinate(coordinate).then((address) => {
+        //     const location = `${address.subThoroughfare} ${address.thoroughfare}, ${address.subAdministrativeArea}, ${address.administrativeArea}`;
+        //     const action = setDestination({
+        //       lat: coordinate.latitude,
+        //       lng: coordinate.longitude,
+        //       description: location,
+        //     });
+
+        //     autocompleteInput?.current.setInputText(location);
+
+        //     dispatch(action);
+        //   });
         // }}
-        onPress={(point) => {
-          const coordinate = point.nativeEvent.coordinate;
-          mapRef.current.addressForCoordinate(coordinate).then((address) => {
-            const location = `${address.subThoroughfare} ${address.thoroughfare}, ${address.subAdministrativeArea}, ${address.administrativeArea}`;
-            const action = setDestination({
-              lat: coordinate.latitude,
-              lng: coordinate.longitude,
-              description: location,
-            });
-
-            autocompleteInput?.current.setAddressText(location);
-
-            dispatch(action);
-          });
-        }}
       >
         {origin && (
           <Marker
             name={"origin"}
             coordinate={{ latitude: origin.lat, longitude: origin.lng }}
             description={origin.description}
+            draggable
+            onDragEnd={handleDragEndOrigin}
           >
             <FontAwesomeIcon icon={faCar} color="blue" />
           </Marker>
@@ -103,6 +137,8 @@ const Map = ({ autocompleteInput }) => {
               longitude: destination.lng,
             }}
             description={destination.description}
+            draggable
+            onDragEnd={handleDragEndDestination}
           ></Marker>
         )}
 

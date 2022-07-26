@@ -22,6 +22,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { USER_STORAGE_KEY } from "@env";
 import { useNavigation } from "@react-navigation/native";
 import { Avatar, Button } from "@rneui/themed";
+import { CustomizedAutoCompletePlace } from "../components/CustomizedAutoCompletePlace";
+import { getAddressFromLocationId } from "../Utils/getAddressFromLocationId";
 
 const HomeScreen = () => {
   const navigator = useNavigation();
@@ -32,6 +34,27 @@ const HomeScreen = () => {
   };
 
   const inputRef = useRef();
+
+  // const handleSelectItem = async (item) => {
+  //   console.log(item);
+  //   let details = await getAddressFromLocationId(item.locationId);
+  //   let action = setOrigin({
+  //     description: item.title,
+  //     lat: details.latitude,
+  //     lng: details.longitude,
+  //   });
+  //   console.log(action);
+  //   dispatch(action);
+  // };
+
+  const handleSelectLocation = (description, lat, lng) => {
+    let action = setOrigin({
+      description,
+      lat,
+      lng,
+    });
+    dispatch(action);
+  };
   return (
     <SafeAreaView>
       <View style={[tw`relative p-8 bg-white h-full mt-7`]}>
@@ -57,27 +80,13 @@ const HomeScreen = () => {
         </View>
 
         <View style={tw`h-20  z-50`}>
-          <View style={tw`absolute w-full flex-row `}>
-            <GoogleAutoComplete
+          <View style={tw`absolute w-full flex-row items-center`}>
+            <CustomizedAutoCompletePlace
               ref={inputRef}
-              styles={{
-                textInput: {
-                  fontSize: 14,
-                  backgroundColor: "#fff",
-                  borderColor: "#e5e5e5",
-                  borderWidth: 1,
-                  borderRadius: 20,
-                },
+              handleSelectLocation={(description, lat, lng) => {
+                handleSelectLocation(description, lat, lng);
               }}
-              onPress={(data, details = null) => {
-                let action = setOrigin({
-                  description: data.description,
-                  lat: details.geometry.location.lat,
-                  lng: details.geometry.location.lng,
-                });
-                dispatch(action);
-              }}
-              placeholder={"Pick origin location..."}
+              placeholder="Choose origin location ..."
             />
             <TouchableOpacity
               style={tw`ml-1 bg-gray-100 px-4 rounded-full flex items-center justify-center h-12`}
@@ -87,7 +96,7 @@ const HomeScreen = () => {
                 if (!location) return;
 
                 let address = await getLocationName(location.coords);
-                inputRef?.current.setAddressText("Your location is choosen");
+                inputRef?.current.setInputText("Your location is choosen");
 
                 let action = setOrigin({
                   description: address,

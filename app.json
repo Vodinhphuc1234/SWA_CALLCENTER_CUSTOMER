@@ -27,7 +27,8 @@
       },
       "permissions": [
         "ACCESS_FINE_LOCATION"
-    ]
+      ],
+      "package": "com.dinhphuc2009.CallCenterCustomer"
     },
     "web": {
       "favicon": "./assets/favicon.png"
