@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { useState } from "react/cjs/react.development";
+import { useState } from "react";
 import { CheckBox, Dialog } from "@rneui/themed";
 import { useDispatch } from "react-redux";
 import { setTripInformation } from "../slices/navSlice";

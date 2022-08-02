@@ -4,7 +4,7 @@ import { Button, Card, Divider, Icon } from "@rneui/themed";
 import tw from "tailwind-react-native-classnames";
 import PagerView from "react-native-pager-view";
 import TaxiOptionCard from "./TaxiOptionCard";
-import { useState } from "react/cjs/react.development";
+import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {

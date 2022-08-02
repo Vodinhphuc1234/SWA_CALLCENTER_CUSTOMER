@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import TripDetail from "../../components/TripDetail";
 import Map from "../../components/Map";
-import { useRef } from "react/cjs/react.development";
+import { useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons/faArrowLeft";
 import { useNavigation } from "@react-navigation/native";
@@ -70,12 +70,12 @@ const MapScreens = () => {
             style={{
               paddingHorizontal: 5,
               width: "100%",
-              backgroundColor: "white",
               position: "absolute",
+              
             }}
           >
             {!isCollapsed && (
-              <View style = {{paddingVertical: 20}}>
+              <View style = {{paddingVertical: 10, paddingHorizontal: 5}}>
                 <CustomizedAutoCompletePlace
                   placeholder={"Pick origin..."}
                   handleLocationChange={handleChangeOrigin}
@@ -123,7 +123,6 @@ const MapScreens = () => {
                 <TouchableOpacity
                   style={{
                     backgroundColor: "white",
-
                     width: 50,
                     height: 30,
                     borderRadius: 20,

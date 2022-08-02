@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "647724256939",
+    "project_id": "map-api-355915",
+    "storage_bucket": "map-api-355915.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:647724256939:android:7e4d832dc1444c4603b1ee",
+        "android_client_info": {
+          "package_name": "com.dinhphuc2009.CallCenterCustomer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "647724256939-l5dhtanuc7e2t2je6i0hbttqol80hf27.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFLOdRnd9OuU_q647i2B5Xa8XJSrKMj0g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "647724256939-l5dhtanuc7e2t2je6i0hbttqol80hf27.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

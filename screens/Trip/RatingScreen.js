@@ -5,16 +5,15 @@ import tw from "tailwind-react-native-classnames";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faCaretRight,
-  faCircleQuestion,
   faPaperPlane,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react/cjs/react.development";
+import { useState } from "react";
 import SafeAreaViewAdroid from "../../components/SafeAreaView";
 import {
   setDestination,
   setOrigin,
-  setTravelTimeInfromation,
+  setTripInformation,
 } from "../../slices/navSlice";
 import { useDispatch } from "react-redux";
 
@@ -62,7 +61,7 @@ const RatingScreen = () => {
               console.log(rate);
               dispatch(setOrigin(null));
               dispatch(setDestination(null));
-              dispatch(setTravelTimeInfromation(null));
+              dispatch(setTripInformation(null));
               navigator.navigate("HomeScreen");
             }}
           >
@@ -90,7 +89,7 @@ const RatingScreen = () => {
             onPress={() => {
               dispatch(setOrigin(null));
               dispatch(setDestination(null));
-              dispatch(setTravelTimeInfromation(null));
+              dispatch(setTripInformation(null));
               navigator.navigate("HomeScreen");
             }}
           >

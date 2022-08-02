@@ -1,24 +1,21 @@
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
-import React from "react";
-import tw from "tailwind-react-native-classnames";
-import MapView, { Marker } from "react-native-maps";
-import MapViewDirections from "react-native-maps-directions";
-import { GOOGLE_MAP_API } from "@env";
+import { faCar } from "@fortawesome/free-solid-svg-icons";
+import { faLocationCrosshairs } from "@fortawesome/free-solid-svg-icons/faLocationCrosshairs";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import React, { useEffect, useRef, useState } from "react";
+import { StyleSheet, TouchableOpacity } from "react-native";
+import MapView, { Marker, Polyline } from "react-native-maps";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react/cjs/react.development";
-import { useRef } from "react/cjs/react.development";
+import tw from "tailwind-react-native-classnames";
 import {
   selectDestination,
   selectOrigin,
   setDestination,
   setOrigin,
-  setTripInformation,
+  setTripInformation
 } from "../slices/navSlice";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faLocationCrosshairs } from "@fortawesome/free-solid-svg-icons/faLocationCrosshairs";
 import getCurrentLocation from "../Utils/getCurrentLocation";
-import { faCar, faMapPin } from "@fortawesome/free-solid-svg-icons";
 import getDistanceAndDuration from "../Utils/getDistanceAndDuration";
+import getGeometies from "../Utils/getGeometries";
 import getLocationName from "../Utils/getLocationName";
 
 const Map = () => {
@@ -61,7 +58,32 @@ const Map = () => {
     });
   };
 
+  const [geometries, setGeometries] = useState([]);
+
   useEffect(() => {
+    if (origin && destination) {
+      mapRef.current.fitToSuppliedMarkers(["origin", "destination"], {
+        edgePadding: DEFAULT_PADDING,
+        animated: true,
+      });
+
+      const asyncFunc = async () => {
+        let summary = await getDistanceAndDuration(origin, destination);
+        const action = setTripInformation({
+          distance: `${(summary.length / 1000).toFixed(2)} km`,
+          duration: `${(summary.duration / 60).toFixed(2)} minutes`,
+        });
+        dispatch(action);
+
+        let coordinates = await getGeometies(origin, destination);
+        setGeometries([...coordinates]);
+      };
+
+      asyncFunc();
+    }
+  }, [origin, destination]);
+
+  const onMapLoaded = () => {
     if (origin && destination) {
       mapRef.current.fitToCoordinates(
         [
@@ -73,19 +95,8 @@ const Map = () => {
           animated: true,
         }
       );
-
-      const getTralvelInfo = async () => {
-        let summary = await getDistanceAndDuration(origin, destination);
-        const action = setTripInformation({
-          distance: `${(summary.length / 1000).toFixed(2)} km`,
-          duration: `${(summary.duration / 60).toFixed(2)} minutes`,
-        });
-        dispatch(action);
-      };
-
-      getTralvelInfo();
     }
-  }, [origin, destination]);
+  };
 
   const mapRef = useRef();
   return (
@@ -93,29 +104,15 @@ const Map = () => {
       <MapView
         style={tw`h-full`}
         initialRegion={{
-          latitude: origin.lat,
-          longitude: origin.lng,
+          latitude: 10.8091391,
+          longitude: 106.7035455,
           latitudeDelta: 0.05,
           longitudeDelta: 0.05,
           zoom: 3,
         }}
         ref={mapRef}
         showsUserLocation={true}
-        // onPress={(point) => {
-        //   const coordinate = point.nativeEvent.coordinate;
-        //   mapRef.current.addressForCoordinate(coordinate).then((address) => {
-        //     const location = `${address.subThoroughfare} ${address.thoroughfare}, ${address.subAdministrativeArea}, ${address.administrativeArea}`;
-        //     const action = setDestination({
-        //       lat: coordinate.latitude,
-        //       lng: coordinate.longitude,
-        //       description: location,
-        //     });
-
-        //     autocompleteInput?.current.setInputText(location);
-
-        //     dispatch(action);
-        //   });
-        // }}
+        onMapLoaded={onMapLoaded}
       >
         {origin && (
           <Marker
@@ -124,6 +121,7 @@ const Map = () => {
             description={origin.description}
             draggable
             onDragEnd={handleDragEndOrigin}
+            identifier="origin"
           >
             <FontAwesomeIcon icon={faCar} color="blue" />
           </Marker>
@@ -139,20 +137,13 @@ const Map = () => {
             description={destination.description}
             draggable
             onDragEnd={handleDragEndDestination}
+            identifier="destination"
           ></Marker>
         )}
 
         {origin && destination && (
-          <MapViewDirections
-            origin={{
-              latitude: origin.lat,
-              longitude: origin.lng,
-            }}
-            destination={{
-              latitude: destination.lat,
-              longitude: destination.lng,
-            }}
-            apikey={GOOGLE_MAP_API}
+          <Polyline
+            coordinates={[...geometries]}
             strokeWidth={3}
             strokeColor="red"
           />

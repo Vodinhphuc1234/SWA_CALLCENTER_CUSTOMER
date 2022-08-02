@@ -9,14 +9,14 @@ import WellcomeScreen from "./WellcomeScreen";
 import LoginScreen from "./Login/LoginScreen";
 import RegisterScreen from "./Register/RegisterScreen";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react/cjs/react.development";
+import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { selectUser, setUser } from "../slices/navSlice";
 import ProfileScreen from "./Profile/ProfileScreen";
 import ProfileEditScreen from "./Profile/ProfileEditScreen";
 import * as Notifications from "expo-notifications";
 import requestNotificationPermisson from "../Utils/requestNotificationPermisson";
-import { useRef } from "react/cjs/react.development";
+import { useRef } from "react";
 
 const NavigationScreen = () => {
   const Stack = createNativeStackNavigator();

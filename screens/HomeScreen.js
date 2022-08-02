@@ -1,29 +1,25 @@
+import { faSignOut } from "@fortawesome/free-solid-svg-icons";
+import { faLocationCrosshairs } from "@fortawesome/free-solid-svg-icons/faLocationCrosshairs";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import { Avatar } from "@rneui/themed";
+import React from "react";
 import {
-  Alert,
   SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
-import tw from "tailwind-react-native-classnames";
-import { setOrigin, setUser } from "../slices/navSlice";
-import NavOptions from "../components/NavOptions";
 import { useDispatch } from "react-redux";
-import GoogleAutoComplete from "../components/GoogleAutoComplete";
-import { faLocationCrosshairs } from "@fortawesome/free-solid-svg-icons/faLocationCrosshairs";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useRef } from "react";
+import tw from "tailwind-react-native-classnames";
+import { CustomizedAutoCompletePlace } from "../components/CustomizedAutoCompletePlace";
+import NavOptions from "../components/NavOptions";
+import { setOrigin, setUser } from "../slices/navSlice";
 import getCurrentLocation from "../Utils/getCurrentLocation";
 import getLocationName from "../Utils/getLocationName";
-import { useRef } from "react/cjs/react.development";
-import { faSignOut } from "@fortawesome/free-solid-svg-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { USER_STORAGE_KEY } from "@env";
-import { useNavigation } from "@react-navigation/native";
-import { Avatar, Button } from "@rneui/themed";
-import { CustomizedAutoCompletePlace } from "../components/CustomizedAutoCompletePlace";
-import { getAddressFromLocationId } from "../Utils/getAddressFromLocationId";
 
 const HomeScreen = () => {
   const navigator = useNavigation();
@@ -35,19 +31,7 @@ const HomeScreen = () => {
 
   const inputRef = useRef();
 
-  // const handleSelectItem = async (item) => {
-  //   console.log(item);
-  //   let details = await getAddressFromLocationId(item.locationId);
-  //   let action = setOrigin({
-  //     description: item.title,
-  //     lat: details.latitude,
-  //     lng: details.longitude,
-  //   });
-  //   console.log(action);
-  //   dispatch(action);
-  // };
-
-  const handleSelectLocation = (description, lat, lng) => {
+  const handleSelectLocation = ({ description, lat, lng }) => {
     let action = setOrigin({
       description,
       lat,
@@ -83,9 +67,7 @@ const HomeScreen = () => {
           <View style={tw`absolute w-full flex-row items-center`}>
             <CustomizedAutoCompletePlace
               ref={inputRef}
-              handleSelectLocation={(description, lat, lng) => {
-                handleSelectLocation(description, lat, lng);
-              }}
+              handleLocationChange={handleSelectLocation}
               placeholder="Choose origin location ..."
             />
             <TouchableOpacity

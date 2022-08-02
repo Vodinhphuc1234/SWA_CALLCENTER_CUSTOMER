@@ -1,31 +1,14 @@
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { Provider } from "react-redux";
-import store from "./store";
 import { NavigationContainer } from "@react-navigation/native";
+import { Text, View } from "react-native";
 import "react-native-gesture-handler";
-import NavigationScreen from "./screens/NavigationScreen";
-import { useEffect, useRef } from "react";
-import { AppState, Text, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ToastProvider } from "react-native-toast-notifications";
+import { Provider } from "react-redux";
 import tw from "tailwind-react-native-classnames";
-import { registerRootComponent } from 'expo';
+import NavigationScreen from "./screens/NavigationScreen";
+import store from "./store";
 
 export default function App() {
-  const appState = useRef(AppState.currentState);
-
-  useEffect(() => {
-    const subscription = AppState.addEventListener("change", (nextAppState) => {
-      console.log(nextAppState);
-      appState.current = nextAppState;
-
-      if (nextAppState == "background") {
-        //fetch api
-      }
-    });
-    return () => {
-      subscription.remove();
-    };
-  }, []);
   return (
     <ToastProvider
       duration={20000}

@@ -5,7 +5,7 @@ import { faArrowRight, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { Input } from "@rneui/themed";
 import tw from "tailwind-react-native-classnames";
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react/cjs/react.development";
+import { useState } from "react";
 
 const PhoneNumberScreen = () => {
   const navigator = useNavigation();
