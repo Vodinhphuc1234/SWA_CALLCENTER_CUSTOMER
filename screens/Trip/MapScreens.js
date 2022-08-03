@@ -1,31 +1,62 @@
 import {
-  StyleSheet,
-  View,
-  KeyboardAvoidingView,
-  TouchableOpacity,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import tw from "tailwind-react-native-classnames";
-import { useDispatch, useSelector } from "react-redux";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import TripDetail from "../../components/TripDetail";
-import Map from "../../components/Map";
-import { useRef } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+  faAngleDown,
+  faAngleUp,
+  faTimesCircle,
+} from "@fortawesome/free-solid-svg-icons";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons/faArrowLeft";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Avatar } from "@rneui/base";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import Modal from "react-native-modal";
+import { useDispatch, useSelector } from "react-redux";
+import { useRef } from "react/cjs/react.development";
+import tw from "tailwind-react-native-classnames";
+import { CustomizedAutoCompletePlace } from "../../components/CustomizedAutoCompletePlace";
+import Map from "../../components/Map";
 import Payment from "../../components/Payment";
 import SafeAreaViewAdroid from "../../components/SafeAreaView";
+import TripDetail from "../../components/TripDetail";
 import {
   selectDestination,
   selectOrigin,
   setDestination,
   setOrigin,
 } from "../../slices/navSlice";
-import { CustomizedAutoCompletePlace } from "../../components/CustomizedAutoCompletePlace";
-import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
+import { GiftedChat } from "react-native-gifted-chat";
 
 const MapScreens = () => {
+  //message modal
+  const [messageModalVisible, setMessageModalVisible] = useState(false);
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    setMessages([
+      {
+        _id: 1,
+        text: "Hello developer",
+        createdAt: new Date(),
+        user: {
+          _id: 2,
+          name: "React Native",
+          avatar: "https://placeimg.com/140/140/any",
+        },
+      },
+    ]);
+  }, []);
+
+  const onSend = useCallback((messages = []) => {
+    setMessages((previousMessages) =>
+      GiftedChat.append(previousMessages, messages)
+    );
+  }, []);
   //trip information
   const origin = useSelector(selectOrigin);
   const destination = useSelector(selectDestination);
@@ -71,11 +102,10 @@ const MapScreens = () => {
               paddingHorizontal: 5,
               width: "100%",
               position: "absolute",
-              
             }}
           >
             {!isCollapsed && (
-              <View style = {{paddingVertical: 10, paddingHorizontal: 5}}>
+              <View style={{ paddingVertical: 10, paddingHorizontal: 5 }}>
                 <CustomizedAutoCompletePlace
                   placeholder={"Pick origin..."}
                   handleLocationChange={handleChangeOrigin}
@@ -158,6 +188,75 @@ const MapScreens = () => {
             </View>
           </View>
           <Map />
+          <TouchableOpacity
+            style={{ position: "absolute", bottom: 10, left: 10 }}
+            onPress={() => {
+              setMessageModalVisible(true);
+            }}
+          >
+            <Avatar
+              size={50}
+              rounded
+              containerStyle={{
+                backgroundColor: "blue",
+              }}
+              icon={{ name: "send", type: "font-awesome" }}
+            />
+          </TouchableOpacity>
+          <Modal
+            isVisible={messageModalVisible}
+            swipeDirection="up"
+            onSwipeComplete={() => setMessageModalVisible(false)}
+            animationIn="slideInUp"
+          >
+            <View
+              style={{
+                backgroundColor: "white",
+                shadowColor: "back",
+                width: "100%",
+                height: "90%",
+                borderRadius: 10,
+                padding: 3,
+              }}
+            >
+              <View
+                style={{
+                  width: "100%",
+                  height: 50,
+                  display: "flex",
+                  backgroundColor: "#f2f3f4",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  position: "relative",
+                }}
+              >
+                <Text
+                  style={{
+                    textAlign: "center",
+                    fontSize: 16,
+                    fontWeight: "700",
+                  }}
+                >
+                  Chat with your customer
+                </Text>
+                <TouchableOpacity
+                  style={{ position: "absolute", right: 20, padding: 10 }}
+                  onPress={() => {
+                    setMessageModalVisible(false);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faTimesCircle} color="gray" />
+                </TouchableOpacity>
+              </View>
+              <GiftedChat
+                messages={messages}
+                onSend={(messages) => onSend(messages)}
+                user={{
+                  _id: 1,
+                }}
+              />
+            </View>
+          </Modal>
         </View>
 
         <View style={tw`h-1/3`}>

@@ -4,16 +4,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { Avatar } from "@rneui/themed";
-import React from "react";
+import React, { useState } from "react";
 import {
+  ActivityIndicator,
   SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { useDispatch } from "react-redux";
-import { useRef } from "react";
+import { useRef } from "react/cjs/react.development";
 import tw from "tailwind-react-native-classnames";
 import { CustomizedAutoCompletePlace } from "../components/CustomizedAutoCompletePlace";
 import NavOptions from "../components/NavOptions";
@@ -24,10 +25,7 @@ import getLocationName from "../Utils/getLocationName";
 const HomeScreen = () => {
   const navigator = useNavigation();
   const dispatch = useDispatch();
-  const logout = async () => {
-    await AsyncStorage.removeItem("USER_TOKEN");
-    dispatch(setUser(null));
-  };
+  const [gettingUserLocation, setGettingUserLocation] = useState(false);
 
   const inputRef = useRef();
 
@@ -69,10 +67,13 @@ const HomeScreen = () => {
               ref={inputRef}
               handleLocationChange={handleSelectLocation}
               placeholder="Choose origin location ..."
+              disabled={gettingUserLocation}
             />
             <TouchableOpacity
+              disabled={gettingUserLocation}
               style={tw`ml-1 bg-gray-100 px-4 rounded-full flex items-center justify-center h-12`}
               onPress={async () => {
+                setGettingUserLocation(true);
                 let location = await getCurrentLocation();
 
                 if (!location) return;
@@ -86,9 +87,14 @@ const HomeScreen = () => {
                   lng: location.coords.longitude,
                 });
                 dispatch(action);
+                setGettingUserLocation(false);
               }}
             >
-              <FontAwesomeIcon icon={faLocationCrosshairs} size={20} />
+              {gettingUserLocation ? (
+                <ActivityIndicator color="black" />
+              ) : (
+                <FontAwesomeIcon icon={faLocationCrosshairs} size={20} />
+              )}
             </TouchableOpacity>
           </View>
         </View>
