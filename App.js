@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import tw from "tailwind-react-native-classnames";
 import NavigationScreen from "./screens/NavigationScreen";
 import store from "./store";
+import { SocketContext, socket } from "./context/socketContext";
 
 export default function App() {
   return (
@@ -26,15 +27,15 @@ export default function App() {
             borderColor: "lightgray",
             borderWidth: 1,
             borderLeftWidth: 5,
-            borderLeftColor: "gray"
+            borderLeftColor: "gray",
           }}
         >
-          <View style = {tw`bg-gray-100 w-20 rounded-full`}>
-            <Text style={tw`text-center font-medium`}>
-              Call center
-            </Text>
+          <View style={tw`bg-gray-100 w-20 rounded-full`}>
+            <Text style={tw`text-center font-medium`}>Call center</Text>
           </View>
-          <Text style={tw`mt-3 font-bold text-base`}>{toastOptions.data.title}</Text>
+          <Text style={tw`mt-3 font-bold text-base`}>
+            {toastOptions.data.title}
+          </Text>
           <Text>{toastOptions.message}</Text>
         </View>
       )}
@@ -42,7 +43,9 @@ export default function App() {
       <Provider store={store}>
         <SafeAreaProvider>
           <NavigationContainer>
-            <NavigationScreen />
+            <SocketContext.Provider value={socket}>
+              <NavigationScreen />
+            </SocketContext.Provider>
           </NavigationContainer>
         </SafeAreaProvider>
       </Provider>

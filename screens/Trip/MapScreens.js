@@ -8,55 +8,42 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Avatar } from "@rneui/base";
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   KeyboardAvoidingView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { GiftedChat } from "react-native-gifted-chat";
 import Modal from "react-native-modal";
 import { useDispatch, useSelector } from "react-redux";
-import { useRef } from "react/cjs/react.development";
 import tw from "tailwind-react-native-classnames";
+import ChatComponent from "../../components/ChatComponent";
 import { CustomizedAutoCompletePlace } from "../../components/CustomizedAutoCompletePlace";
 import Map from "../../components/Map";
 import Payment from "../../components/Payment";
 import SafeAreaViewAdroid from "../../components/SafeAreaView";
 import TripDetail from "../../components/TripDetail";
+import { SocketContext } from "../../context/socketContext";
 import {
+  addMessages,
   selectDestination,
+  selectMessages,
   selectOrigin,
   setDestination,
   setOrigin,
 } from "../../slices/navSlice";
-import { GiftedChat } from "react-native-gifted-chat";
 
 const MapScreens = () => {
-  //message modal
   const [messageModalVisible, setMessageModalVisible] = useState(false);
-  const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: "Hello developer",
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: "React Native",
-          avatar: "https://placeimg.com/140/140/any",
-        },
-      },
-    ]);
-  }, []);
-
-  const onSend = useCallback((messages = []) => {
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, messages)
-    );
-  }, []);
   //trip information
   const origin = useSelector(selectOrigin);
   const destination = useSelector(selectDestination);
@@ -248,13 +235,7 @@ const MapScreens = () => {
                   <FontAwesomeIcon icon={faTimesCircle} color="gray" />
                 </TouchableOpacity>
               </View>
-              <GiftedChat
-                messages={messages}
-                onSend={(messages) => onSend(messages)}
-                user={{
-                  _id: 1,
-                }}
-              />
+              <ChatComponent />
             </View>
           </Modal>
         </View>

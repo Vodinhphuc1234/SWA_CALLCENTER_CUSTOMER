@@ -6,6 +6,7 @@ const initialState = {
   tripInformation: null,
   user: null,
   driverInformation: null,
+  messages: [],
 };
 
 export const navSlice = createSlice({
@@ -47,18 +48,31 @@ export const navSlice = createSlice({
     },
     setDriverInformation(state, action) {
       state.driverInformation = action.payload;
-    }
+    },
+    setMessages(state, action) {
+      state.messages = [...action.payload];
+    },
+    addMessages(state, action) {
+      state.messages = [...action.payload, ...state.messages];
+    },
   },
 });
 
-export const { setOrigin, setDestination, setTripInformation, setUser, setDriverInformation } =
-  navSlice.actions;
+export const {
+  setOrigin,
+  setDestination,
+  setTripInformation,
+  setUser,
+  setDriverInformation,
+  setMessages,
+  addMessages
+} = navSlice.actions;
 
 export const selectOrigin = (state) => state.nav.origin;
 export const selectDestination = (state) => state.nav.destination;
-export const selectTripInformation = (state) =>
-  state.nav.tripInformation;
+export const selectTripInformation = (state) => state.nav.tripInformation;
 export const selectUser = (state) => state.nav.user;
 export const selectDriverInfomation = (state) => state.nav.driverInformation;
+export const selectMessages = (state) => state.nav.messages;
 
 export default navSlice.reducer;

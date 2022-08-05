@@ -1,28 +1,65 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React, { useContext, useEffect } from "react";
+import { StyleSheet } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { SocketContext } from "../context/socketContext";
+import { addMessages, selectUser, setUser } from "../slices/navSlice";
 import HomeScreen from "./HomeScreen";
+import LoginScreen from "./Login/LoginScreen";
+import ProfileEditScreen from "./Profile/ProfileEditScreen";
+import ProfileScreen from "./Profile/ProfileScreen";
+import RegisterScreen from "./Register/RegisterScreen";
 import MapScreens from "./Trip/MapScreens";
 import ProcessingScreen from "./Trip/ProcessingScreen";
 import RatingScreen from "./Trip/RatingScreen";
 import WellcomeScreen from "./WellcomeScreen";
-import LoginScreen from "./Login/LoginScreen";
-import RegisterScreen from "./Register/RegisterScreen";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { selectUser, setUser } from "../slices/navSlice";
-import ProfileScreen from "./Profile/ProfileScreen";
-import ProfileEditScreen from "./Profile/ProfileEditScreen";
-import * as Notifications from "expo-notifications";
-import requestNotificationPermisson from "../Utils/requestNotificationPermisson";
-import { useRef } from "react";
 
 const NavigationScreen = () => {
   const Stack = createNativeStackNavigator();
 
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
+
+  const socket = useContext(SocketContext);
+
+  const handleAddMessages = (tempMessages) => {
+    const sendedMessages = [];
+    tempMessages.forEach((message) => {
+      sendedMessages.push({
+        ...message,
+        createdAt: `${message.createdAt}`,
+      });
+    });
+    console.log(sendedMessages);
+    const action = addMessages(sendedMessages);
+    dispatch(action);
+  };
+
+  useEffect(() => {
+    // send a message to the server
+    socket.emit("onJoin", "customer", "trip");
+
+    // receive a message from the server
+    socket.on("sendMessage", (message) => {
+      console.log("receive");
+      const { text, createdAt, from } = message;
+
+      var messages = [];
+      messages.push({
+        _id: Math.random() * 10,
+        text: text,
+        createdAt: createdAt,
+        user: {
+          _id: 2,
+          name: "React Native",
+          avatar: "https://placeimg.com/140/140/any",
+        },
+      });
+      handleAddMessages(messages);
+      console.log(text, createdAt, from);
+    });
+  }, []);
 
   useEffect(() => {
     const asyncUser = async () => {
@@ -41,27 +78,30 @@ const NavigationScreen = () => {
   }, []);
 
   //useRef for hold current of notification and timeout
-  const notificationListener = useRef();
+  // const notificationListener = useRef();
 
   //effect for reaceive notification
-  useEffect(() => {
-    let token;
-    const asyncGetToken = async () => {
-      token = await requestNotificationPermisson(Notifications);
-      notificationListener.current =
-        Notifications.addNotificationReceivedListener((notification) => {
-          console.log(notification.request.content.data);
-        });
-      console.log(token);
-    };
-    asyncGetToken();
+  // useEffect(() => {
+  // let token;
+  // const asyncGetToken = async () => {
+  //   token = await requestNotificationPermisson(Notifications);
+  //   notificationListener.current =
+  //     Notifications.addNotificationReceivedListener((notification) => {
+  //       console.log(notification.request.content.data);
+  //     });
+  //   console.log(token);
+  // };
+  // asyncGetToken();
 
-    return () => {
-      Notifications.removeNotificationSubscription(
-        notificationListener.current
-      );
-    };
-  }, []);
+  // return () => {
+  //   Notifications.removeNotificationSubscription(
+  //     notificationListener.current
+  //   );
+  // };
+  // const socket = io("ws://swa-socket.herokuapp.com");
+  // const action = setSocket(socket);
+  // dispatch(action);
+  // }, []);
 
   return user && user.userToken ? (
     <Stack.Navigator>
