@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "647724256939",
-    "project_id": "map-api-355915",
-    "storage_bucket": "map-api-355915.appspot.com"
+    "project_number": "888042378456",
+    "project_id": "fcmproject-c3a35",
+    "storage_bucket": "fcmproject-c3a35.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:647724256939:android:7e4d832dc1444c4603b1ee",
+        "mobilesdk_app_id": "1:888042378456:android:e39f4ad64e3f4947c633ad",
         "android_client_info": {
           "package_name": "com.dinhphuc2009.CallCenterCustomer"
         }
       },
       "oauth_client": [
         {
-          "client_id": "647724256939-l5dhtanuc7e2t2je6i0hbttqol80hf27.apps.googleusercontent.com",
+          "client_id": "888042378456-s20rh28j9k7iandaq8f7i9q7vnkb0m7k.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCFLOdRnd9OuU_q647i2B5Xa8XJSrKMj0g"
+          "current_key": "AIzaSyAhPuV4tcA-5CFG3uwsKM4cSQ-b83CTRwU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "647724256939-l5dhtanuc7e2t2je6i0hbttqol80hf27.apps.googleusercontent.com",
+              "client_id": "888042378456-s20rh28j9k7iandaq8f7i9q7vnkb0m7k.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

@@ -20,7 +20,7 @@ const requestNotificationPermisson = async (Notifications) => {
     alert("Failed to get push token for push notification!");
     return;
   }
-  token = (await Notifications.getExpoPushTokenAsync()).data;
+  token = (await Notifications.getDevicePushTokenAsync()).data;
 
   if (Platform.OS === "android") {
     Notifications.setNotificationChannelAsync("default", {

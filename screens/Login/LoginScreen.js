@@ -1,20 +1,15 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
-import SafeAreaViewAdroid from "../../components/SafeAreaView";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faArrowLeft,
-  faArrowLeftRotate,
-  faArrowRight,
-  faCircleCheck,
-  faCircleQuestion,
+  faCircleQuestion
 } from "@fortawesome/free-solid-svg-icons";
-import tw from "tailwind-react-native-classnames";
-import { Input } from "@rneui/themed";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import PhoneNumberScreen from "./PhoneNumberScreen";
-import OTPScreen from "./OTPScreen";
+import React from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import tw from "tailwind-react-native-classnames";
+import SafeAreaViewAdroid from "../../components/SafeAreaView";
+import FormScreen from "./FormScreen";
 
 const LoginScreen = () => {
   const Stack = createNativeStackNavigator();
@@ -32,18 +27,7 @@ const LoginScreen = () => {
           </TouchableOpacity>
           <FontAwesomeIcon icon={faCircleQuestion} size={20} />
         </View>
-        <Stack.Navigator>
-          <Stack.Screen
-            name="PhoneNumberScreen"
-            component={PhoneNumberScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="OTPScreen"
-            component={OTPScreen}
-            options={{ headerShown: false }}
-          />
-        </Stack.Navigator>
+        <FormScreen />
       </View>
     </SafeAreaViewAdroid>
   );

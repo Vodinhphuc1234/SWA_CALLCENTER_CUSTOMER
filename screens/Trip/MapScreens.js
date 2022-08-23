@@ -8,20 +8,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Avatar } from "@rneui/base";
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { GiftedChat } from "react-native-gifted-chat";
+import Collapsible from "react-native-collapsible";
 import Modal from "react-native-modal";
 import { useDispatch, useSelector } from "react-redux";
 import tw from "tailwind-react-native-classnames";
@@ -30,13 +24,12 @@ import { CustomizedAutoCompletePlace } from "../../components/CustomizedAutoComp
 import Map from "../../components/Map";
 import Payment from "../../components/Payment";
 import SafeAreaViewAdroid from "../../components/SafeAreaView";
+import TrackedTrip from "../../components/TrackedTrip";
 import TripDetail from "../../components/TripDetail";
-import { SocketContext } from "../../context/socketContext";
 import {
-  addMessages,
   selectDestination,
-  selectMessages,
   selectOrigin,
+  selectTripInformation,
   setDestination,
   setOrigin,
 } from "../../slices/navSlice";
@@ -48,6 +41,7 @@ const MapScreens = () => {
   const origin = useSelector(selectOrigin);
   const destination = useSelector(selectDestination);
 
+  const tripInfo = useSelector(selectTripInformation);
   //input ref
   const originInput = useRef(null);
   const destinationInput = useRef(null);
@@ -92,7 +86,7 @@ const MapScreens = () => {
             }}
           >
             {!isCollapsed && (
-              <View style={{ paddingVertical: 10, paddingHorizontal: 5 }}>
+              <View style={{ height: 100 }}>
                 <CustomizedAutoCompletePlace
                   placeholder={"Pick origin..."}
                   handleLocationChange={handleChangeOrigin}
@@ -105,7 +99,6 @@ const MapScreens = () => {
                 />
               </View>
             )}
-
             <View
               style={{
                 display: "flex",
@@ -158,16 +151,16 @@ const MapScreens = () => {
             </View>
           </View>
         </View>
-        <View style={tw`h-2/3 w-full bg-red-100`}>
-          <View style={tw`absolute z-50 px-1 w-full rounded-full mt-2`}>
+        <View style={{ height: `${isCollapsed ? 94 : 65}%` }}>
+          <View style={{ position: "absolute", margin: 5, zIndex: 25 }}>
             <View
-              style={tw`flex-row items-center w-full
+              style={tw`flex-row items-center
             `}
             >
               <TouchableOpacity
                 style={tw`px-5 py-4 bg-gray-500 mr-2 rounded-lg flex items-center justify-center opacity-50 h-10 `}
                 onPress={() => {
-                  navigator.navigate("HomeScreen");
+                  navigator.goBack();
                 }}
               >
                 <FontAwesomeIcon icon={faArrowLeft} />
@@ -240,19 +233,30 @@ const MapScreens = () => {
           </Modal>
         </View>
 
-        <View style={tw`h-1/3`}>
-          <stack.Navigator>
-            <stack.Screen
-              name="TripDetail"
-              component={TripDetail}
-              options={{ headerShown: false }}
-            />
-            <stack.Screen
-              name="Payment"
-              component={Payment}
-              options={{ headerShown: false }}
-            />
-          </stack.Navigator>
+        <View
+          style={{ height: `${isCollapsed ? 6 : 35}%` }}
+          onTouchEnd={() => {
+            setIsCollapsed(false);
+          }}
+        >
+          {tripInfo?.status == "processing" ||
+          tripInfo?.status == "assigned" ||
+          tripInfo?.status == "pick_up" ? (
+            <TrackedTrip />
+          ) : (
+            <stack.Navigator>
+              <stack.Screen
+                name="TripDetail"
+                component={TripDetail}
+                options={{ headerShown: false }}
+              />
+              <stack.Screen
+                name="Payment"
+                component={Payment}
+                options={{ headerShown: false }}
+              />
+            </stack.Navigator>
+          )}
         </View>
       </SafeAreaViewAdroid>
     </KeyboardAvoidingView>

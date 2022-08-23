@@ -8,15 +8,19 @@ import { setTripInformation } from "../slices/navSlice";
 const paymentOptions = [
   {
     id: 0,
-    method: "Cash",
+    method: "cash",
   },
   {
     id: 1,
-    method: "Momo",
+    method: "momo",
   },
   {
     id: 2,
-    method: "Bank",
+    method: "payoo",
+  },
+  {
+    id: 3,
+    method: "visa",
   },
 ];
 const PaymentMethodOptionsDialog = ({ isVisible, setVisible }) => {
@@ -48,7 +52,7 @@ const PaymentMethodOptionsDialog = ({ isVisible, setVisible }) => {
           onPress={() => {
             const paymentMethod = paymentOptions.filter(
               (item) => item.id === checked
-            )[0];
+            )[0].method;
 
             let action = setTripInformation({
               paymentMethod,

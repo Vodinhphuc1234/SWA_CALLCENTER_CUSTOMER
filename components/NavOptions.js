@@ -1,17 +1,16 @@
-import { StyleSheet, View, Image, Text } from "react-native";
-import React from "react";
-import tw from "tailwind-react-native-classnames";
-import { TouchableOpacity } from "react-native";
-import { Icon } from "@rneui/themed";
-import { useNavigation } from "@react-navigation/native";
-import { selectOrigin } from "../slices/navSlice";
-import { useSelector } from "react-redux";
+import { faAngleRight, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faAngleRight, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { useNavigation } from "@react-navigation/native";
+import React from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useSelector } from "react-redux";
+import tw from "tailwind-react-native-classnames";
+import { selectOrigin, selectTripInformation } from "../slices/navSlice";
 
 const NavOptions = () => {
   const navigation = useNavigation();
   const origin = useSelector(selectOrigin);
+  const tripInfo = useSelector(selectTripInformation);
   return (
     <View style={tw`flex`}>
       <TouchableOpacity
@@ -34,9 +33,18 @@ const NavOptions = () => {
         />
 
         <View style={tw`flex-row items-center`}>
-          <Text style={tw`font-bold text-lg`}>Get a ride</Text>
+          <Text style={tw`font-bold text-lg`}>
+            {tripInfo?.status == "processing" || tripInfo?.status == "assigned" || tripInfo?.status == "pick_up"
+              ? "Track your trip"
+              : "Get a taxi"}
+          </Text>
           <View style={tw`bg-white rounded-full p-2 ml-5`}>
-            <FontAwesomeIcon icon={faAngleRight} size={20} />
+            {tripInfo?.status == "processing" ||
+            tripInfo?.status == "assigned" || tripInfo?.status == "pick_up" ? (
+              <FontAwesomeIcon icon={faSearch} size={20} />
+            ) : (
+              <FontAwesomeIcon icon={faAngleRight} size={20} />
+            )}
           </View>
         </View>
       </TouchableOpacity>

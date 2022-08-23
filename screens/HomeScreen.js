@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { Avatar } from "@rneui/themed";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -13,12 +13,18 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import { useDispatch } from "react-redux";
-import { useRef } from "react/cjs/react.development";
+import { useDispatch, useSelector } from "react-redux";
 import tw from "tailwind-react-native-classnames";
 import { CustomizedAutoCompletePlace } from "../components/CustomizedAutoCompletePlace";
 import NavOptions from "../components/NavOptions";
-import { setOrigin, setUser } from "../slices/navSlice";
+import {
+  reset,
+  selectOrigin,
+  selectPingAuth,
+  setOrigin,
+  setPingAuth
+} from "../slices/navSlice";
+import logout from "../Utils/auth/logout";
 import getCurrentLocation from "../Utils/getCurrentLocation";
 import getLocationName from "../Utils/getLocationName";
 
@@ -26,8 +32,10 @@ const HomeScreen = () => {
   const navigator = useNavigation();
   const dispatch = useDispatch();
   const [gettingUserLocation, setGettingUserLocation] = useState(false);
+  const pingAuth = useSelector(selectPingAuth);
 
   const inputRef = useRef();
+  const origin = useSelector(selectOrigin);
 
   const handleSelectLocation = ({ description, lat, lng }) => {
     let action = setOrigin({
@@ -37,6 +45,11 @@ const HomeScreen = () => {
     });
     dispatch(action);
   };
+
+  useEffect(() => {
+    if (origin) inputRef?.current.setInputText(origin?.description);
+    else inputRef?.current.setInputText("");
+  }, [origin]);
   return (
     <SafeAreaView>
       <View style={[tw`relative p-8 bg-white h-full mt-7`]}>
@@ -79,7 +92,6 @@ const HomeScreen = () => {
                 if (!location) return;
 
                 let address = await getLocationName(location.coords);
-                inputRef?.current.setInputText("Your location is choosen");
 
                 let action = setOrigin({
                   description: address,
@@ -87,6 +99,7 @@ const HomeScreen = () => {
                   lng: location.coords.longitude,
                 });
                 dispatch(action);
+
                 setGettingUserLocation(false);
               }}
             >
@@ -104,8 +117,11 @@ const HomeScreen = () => {
         <TouchableOpacity
           style={tw`absolute bottom-20 right-5 bg-gray-500 h-10 w-10 rounded-full flex items-center justify-center`}
           onPress={async () => {
-            await AsyncStorage.removeItem("USER_TOKEN");
-            dispatch(setUser(null));
+            const data = await logout();
+            console.log(data);
+            dispatch(reset());
+            dispatch(setPingAuth(!pingAuth));
+            await AsyncStorage.removeItem("token");
           }}
         >
           <FontAwesomeIcon icon={faSignOut} color="white" size={20} />

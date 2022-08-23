@@ -1,57 +1,60 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
-import { Button, Card, Divider, Icon } from "@rneui/themed";
-import tw from "tailwind-react-native-classnames";
-import PagerView from "react-native-pager-view";
-import TaxiOptionCard from "./TaxiOptionCard";
-import { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faAngleLeft,
   faAngleRight,
   faMoneyBill,
 } from "@fortawesome/free-solid-svg-icons";
-import { useSelector } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useNavigation } from "@react-navigation/native";
+import { Button, Divider } from "@rneui/themed";
+import React, { useState } from "react";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import PagerView from "react-native-pager-view";
+import { useDispatch, useSelector } from "react-redux";
+import tw from "tailwind-react-native-classnames";
 import {
   selectDestination,
+  selectIP,
   selectOrigin,
   selectTripInformation,
+  setSocketLink,
+  setTripInformation,
 } from "../slices/navSlice";
+import bookTrip from "../Utils/trip/bookTrip";
 import PaymentMethodOptionsDialog from "./PaymentMethodOptionsDialog";
-import pushNotification from "../Utils/pushNotification";
+import TaxiOptionCard from "./TaxiOptionCard";
+import Constants from "expo-constants";
+const { manifest } = Constants;
 
 const taxiOptions = [
   {
-    type: "4 seats",
-    speed: 100,
-    price: 100000,
+    type: "four_seats",
     image:
       "https://5.imimg.com/data5/NJ/NL/GLADMIN-34139327/sail-sedan-4-seater-luxury-car-rental-services-500x500.png",
   },
   {
-    type: "7 seats",
-    speed: 70,
-    price: 150000,
+    type: "six_seats",
     image:
       "https://www.kindpng.com/picc/m/13-131791_toyota-family-car-7-seater-hd-png-download.png",
-  },
-  {
-    type: "10 seats",
-    speed: 60,
-    price: 120000,
-    image:
-      "https://mpng.subpng.com/20180330/jfw/kisspng-toyota-hilux-car-toyota-land-cruiser-prado-toyota-van-5abdce71911090.8064252015223885935942.jpg",
   },
 ];
 
 const Payment = () => {
+  const [loading, setLoading] = useState(false);
   const [showPaymentOptionsDialog, setShowPaymentOptionsDialog] =
     useState(false);
   const navigator = useNavigation();
   const tripInfo = useSelector(selectTripInformation);
   const origin = useSelector(selectOrigin);
   const destination = useSelector(selectDestination);
+  const IP = useSelector(selectIP);
+
+  const dispatch = useDispatch();
   return (
     <>
       <View style={tw`bg-white h-full`}>
@@ -65,7 +68,7 @@ const Payment = () => {
             <FontAwesomeIcon icon={faAngleLeft} color="black" size={20} />
           </TouchableOpacity>
           <Text style={tw`text-center py-2 text-lg font-bold`}>
-            Pick Taxi Type {tripInfo?.tripDetails?.type}
+            Pick Taxi Type {tripInfo?.type}
           </Text>
         </View>
         <Divider />
@@ -89,7 +92,7 @@ const Payment = () => {
         >
           <FontAwesomeIcon icon={faMoneyBill} />
           <Text style={tw`text-sm font-medium mx-2`}>
-            {tripInfo?.paymentMethod?.method || "Cash"}
+            {tripInfo?.paymentMethod}
           </Text>
           <FontAwesomeIcon icon={faAngleRight} size={14} />
         </TouchableOpacity>
@@ -104,31 +107,47 @@ const Payment = () => {
             }}
             containerStyle={tw`w-full`}
             titleStyle={tw`text-white`}
-            disabled={!tripInfo?.tripDetails}
+            disabled={!tripInfo?.type || !tripInfo?.paymentMethod || loading}
             iconRight={true}
             onPress={async () => {
-              const data = {
-                origin: {
-                  ...origin,
-                  name: origin.description.split(",")[0],
-                },
-                destination: {
-                  ...destination,
-                  name: destination.description.split(",")[0],
-                },
-              };
-              await pushNotification(
-                "ExponentPushToken[ZFt-cfD22B6TXNc2g5LxZ8]",
-                "You have a ride",
-                "Click accept to get this trip",
-                data
-              );
-              navigator.navigate("ProcessingScreen");
+              setLoading(true);
+              const data = await bookTrip(tripInfo, origin, destination);
+              setLoading(false);
+              if (data.message) {
+                alert(data.message);
+                return;
+              }
+
+              if (data) {
+                let action = setSocketLink(
+                  data["self_socket"].replace("localhost", IP)
+                );
+                dispatch(
+                  setTripInformation({
+                    price: data.cash,
+                    distance: data.distance,
+                    duration: data["estimate_time"],
+                    paymentMetho: data["payment_method"],
+                    status: data.status,
+                    self: data.self,
+                  })
+                );
+                dispatch(action);
+                navigator.navigate("ProcessingScreen");
+              }
             }}
           >
             <View style={tw`w-full`}>
               <View style={tw`absolute right-3`}>
-                <FontAwesomeIcon icon={faAngleRight} color="white" size={20} />
+                {loading ? (
+                  <ActivityIndicator />
+                ) : (
+                  <FontAwesomeIcon
+                    icon={faAngleRight}
+                    color="white"
+                    size={20}
+                  />
+                )}
               </View>
               <Text style={tw`text-center text-white font-bold`}>
                 Get a taxi

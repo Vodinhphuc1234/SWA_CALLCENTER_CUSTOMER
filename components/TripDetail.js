@@ -3,23 +3,19 @@ import React from "react";
 import tw from "tailwind-react-native-classnames";
 import { useSelector } from "react-redux";
 import { selectTripInformation } from "../slices/navSlice";
-import { Icon } from "@rneui/base";
+import { Divider, Icon } from "@rneui/base";
 import { useNavigation } from "@react-navigation/native";
 
 const TripDetail = ({ props }) => {
   const tralvelInfomation = useSelector(selectTripInformation);
+  console.log(tralvelInfomation);
   const navigator = useNavigation();
   return (
     <View style={tw`bg-white h-full`}>
       <View style={tw` mx-2 rounded-lg my-2`}>
         <Text style={tw`text-center py-1 text-lg font-bold`}>Trip Detail</Text>
       </View>
-      <View
-        style={{
-          borderBottomColor: "gray",
-          borderBottomWidth: 0.5,
-        }}
-      />
+      <Divider />
 
       {tralvelInfomation && (
         <>
@@ -34,31 +30,22 @@ const TripDetail = ({ props }) => {
               <Text style={tw`text-sm text-gray-500`}>
                 {tralvelInfomation.duration}
               </Text>
+              <Text style={tw`text-sm text-gray-500`}>
+                {tralvelInfomation.price}
+              </Text>
             </View>
           </View>
-          <View
-            style={{
-              borderBottomColor: "gray",
-              borderBottomWidth: 0.5,
-            }}
-          />
+          <Divider />
+
           <View style={tw`flex-row justify-evenly`}>
             <TouchableOpacity
               style={tw`bg-black text-center mt-2 py-2 w-40 rounded-full`}
-            >
-              <View style={tw``}>
-                <Text style={tw`text-center text-white`}>Click me</Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={tw`bg-white border-2 text-center mt-2 py-2 w-40 rounded-full`}
               onPress={() => {
                 navigator.navigate("Payment");
               }}
             >
               <View>
-                <Text style={tw`text-center text-black`}>Pick Taxi Type</Text>
+                <Text style={tw`text-center text-white`}>Pick Taxi Type</Text>
               </View>
             </TouchableOpacity>
           </View>

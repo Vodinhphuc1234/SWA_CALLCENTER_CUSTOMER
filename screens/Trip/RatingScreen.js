@@ -3,16 +3,15 @@ import React from "react";
 import { AirbnbRating, Button } from "@rneui/themed";
 import tw from "tailwind-react-native-classnames";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import {
-  faCaretRight,
-  faPaperPlane,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCaretRight, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import SafeAreaViewAdroid from "../../components/SafeAreaView";
 import {
   setDestination,
+  setDriverInformation,
   setOrigin,
+  setSocket,
   setTripInformation,
 } from "../../slices/navSlice";
 import { useDispatch } from "react-redux";
@@ -90,6 +89,8 @@ const RatingScreen = () => {
               dispatch(setOrigin(null));
               dispatch(setDestination(null));
               dispatch(setTripInformation(null));
+              dispatch(setDriverInformation(null));
+              dispatch(setSocket(null));
               navigator.navigate("HomeScreen");
             }}
           >

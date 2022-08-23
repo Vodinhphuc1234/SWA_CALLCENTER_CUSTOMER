@@ -1,11 +1,13 @@
 import * as Notifications from "expo-notifications";
 
-async function pushLocalNotification(title, body, data) {
+async function pushLocalNotification(title, body) {
+  console.log("noti");
   await Notifications.scheduleNotificationAsync({
     content: {
       title: title,
       body: body,
-      data: data,
+      data: null,
+      sound: true,
     },
     trigger: null,
   });

@@ -11,11 +11,7 @@ const TaxiOptionCard = ({ price, speed, type, image }) => {
     <TouchableOpacity
       onPress={() => {
         const action = setTripInformation({
-          tripDetails: {
-            type,
-            speed,
-            price,
-          },
+          type,
         });
         dispatch(action);
       }}
@@ -32,9 +28,9 @@ const TaxiOptionCard = ({ price, speed, type, image }) => {
         <Divider orientation="vertical" />
 
         <View style={tw`ml-5`}>
+          <Text style={tw``}></Text>
           <Text style={tw`font-bold text-lg`}>{type}</Text>
-          <Text style={tw``}>{speed} km/h</Text>
-          <Text style={tw``}>{price} VND</Text>
+          <Text style={tw``}></Text>
         </View>
       </View>
     </TouchableOpacity>
